@@ -1,5 +1,6 @@
 package server;
 
+import entities.User;
 import file_worker.FileWorker;
 
 import java.io.File;
@@ -9,6 +10,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WebServer {
     private static final char SEP = File.separatorChar;
@@ -16,8 +19,9 @@ public class WebServer {
     private static final String SETTINGS_FILE_PATH = "src" + SEP + "main" + SEP + "resources" + SEP + "settings.txt";
     private static final String LOG_FILE_PATH = "src" + SEP + "main" + SEP + "resources" + SEP + "server.log";
     final static String HOST = FileWorker.getHostAndPortFromConfig(SETTINGS_FILE_PATH)[FileWorker.HOST_INDEX];
-    final static int PORT =
+    private final static int PORT =
             Integer.parseInt(FileWorker.getHostAndPortFromConfig(SETTINGS_FILE_PATH)[FileWorker.PORT_INDEX]);
+    private final static List<User> users = new ArrayList<>();
 
     public static void start() {
         System.out.println(COLOR + "Сервер запускается...");
@@ -36,9 +40,9 @@ public class WebServer {
                     buf.clear();
                     System.out.println(COLOR + "Сервер получил запрос:\t" + request);
 
-                    String result = "It's empty yet";
+                    String result = "";
 //                    TODO: some server magic
-
+                    result = "<!!!> " + request;
                     System.out.println(COLOR + "Сервер отправляет ответ:\t" + result);
                     client.write(ByteBuffer.wrap(result.getBytes(StandardCharsets.UTF_8)));
                 }
@@ -48,4 +52,6 @@ public class WebServer {
         }
         System.out.println(COLOR + "Сервер завершил работу" + "\033[0m");
     }
+
+    private static boolean addNewUser(User user) { return users.add(user); }
 }
