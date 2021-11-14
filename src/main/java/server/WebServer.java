@@ -7,8 +7,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.ServerSocketChannel;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class WebServer {
@@ -21,7 +25,7 @@ public class WebServer {
     private final static String HOST = FileWorker.getHostAndPortFromConfig(SETTINGS_FILE_PATH)[FileWorker.HOST_INDEX];
     private static final int PORT =
             Integer.parseInt(FileWorker.getHostAndPortFromConfig(SETTINGS_FILE_PATH)[FileWorker.PORT_INDEX]);
-    protected static final Set<User> users = new HashSet<>();
+    protected static final Map<String, User> users = new ConcurrentSkipListMap<>();
     protected static final AtomicInteger online = new AtomicInteger(0);
 
     public static void start() {
@@ -39,7 +43,7 @@ public class WebServer {
 //        System.out.println(COLOR + "Сервер завершил работу" + "\033[0m");
     }
 
-    private static boolean addNewUser(User user) {
-        return users.add(user);
+    private static void addNewUser(User user) {
+        users.put(user.getName(), user);
     }
 }

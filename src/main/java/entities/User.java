@@ -5,39 +5,47 @@ import java.util.List;
 import java.util.Objects;
 
 public class User {
-    private final String NAME;
-    private final String EMAIL;
-    private final String PASSWORD;
+    private final String name;
     private final List<Message> incomingMessages = new ArrayList<>();
     private final List<Message> outgoingMessages = new ArrayList<>();
 
-    public User(String name, String email, String password) {
-        NAME = name;
-        EMAIL = email;
-        PASSWORD = password;
+    public User(String name) {
+        this.name = name;
     }
 
-    public boolean receiveMessage(Message message) { return outgoingMessages.add(message); }
+    public String getName() {
+        return name;
+    }
 
-    public boolean sendMessage(Message message) { return incomingMessages.add(message); }
+    public List<Message> getIncomingMessages() {
+        return incomingMessages;
+    }
+
+    public List<Message> getOutgoingMessages() {
+        return outgoingMessages;
+    }
+
+    public User receiveMessage(Message message) {
+        outgoingMessages.add(message);
+        return this;
+    }
+
+    public User sendMessage(Message message) {
+        incomingMessages.add(message);
+        return this;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final User user = (User) o;
-        return EMAIL.equals(user.EMAIL);
+        return name.equals(user.name);
     }
 
     @Override
-    public int hashCode() { return Objects.hash(EMAIL); }
+    public int hashCode() { return Objects.hash(name); }
 
     @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("User{");
-        sb      .append("NAME='")   .append(NAME)   .append('\'')
-                .append(", EMAIL='").append(EMAIL)  .append('\'')
-                .append('}');
-        return sb.toString();
-    }
+    public String toString() { return "User{" + "NAME='" + name + "}"; }
 }
