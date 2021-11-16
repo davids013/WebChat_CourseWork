@@ -26,12 +26,12 @@ public class User {
     }
 
     public User receiveMessage(Message message) {
-        outgoingMessages.add(message);
+        incomingMessages.add(message);
         return this;
     }
 
     public User sendMessage(Message message) {
-        incomingMessages.add(message);
+        outgoingMessages.add(message);
         return this;
     }
 
@@ -47,5 +47,8 @@ public class User {
     public int hashCode() { return Objects.hash(name); }
 
     @Override
-    public String toString() { return "User{" + "NAME='" + name + "}"; }
+    public String toString() {
+        return "User{" + "NAME='" + name + "', incomingMessages="
+                + incomingMessages + ", outgoingMessages=" + outgoingMessages + "}";
+    }
 }

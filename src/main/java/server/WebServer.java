@@ -20,6 +20,8 @@ public class WebServer {
     protected static final String COLOR = "\033[33m";
     protected static final String EXIT_WORD_EN = "exit";
     protected static final String EXIT_WORD_RU = "учше";
+    public static final String SEND_MESSAGE_KEY = "send";
+    public static final String REGISTER_USER_KEY = "register";
     private static final String SETTINGS_FILE_PATH = "src" + SEP + "main" + SEP + "resources" + SEP + "settings.txt";
     private static final String LOG_FILE_PATH = "src" + SEP + "main" + SEP + "resources" + SEP + "server.log";
     private final static String HOST = FileWorker.getHostAndPortFromConfig(SETTINGS_FILE_PATH)[FileWorker.HOST_INDEX];

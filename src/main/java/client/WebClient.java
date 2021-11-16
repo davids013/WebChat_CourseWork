@@ -1,6 +1,9 @@
 package client;
 
+import entities.Request;
+import entities.Serializer;
 import file_worker.FileWorker;
+import server.WebServer;
 
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -30,26 +33,29 @@ public class WebClient {
             socketChannel.connect(address);
             final ByteBuffer inputBuffer = ByteBuffer.allocate(2 << 20);
 
-            String request;
+            String input;
             while (true) {
                 Thread.sleep(100); // Костыль для правильной очередности печати в консоль
                 System.out.print(COLOR +
                         "Введите запрос серверу (`" + EXIT_WORD_EN + "` для выхода):\n>> ");
-//                request = "test request";
+//                input = "test input";
 //                Thread.sleep(1000);
-                request = scanner.nextLine();
-                System.out.println(COLOR + "Клиент " + Thread.currentThread().getName() + " отсылает запрос:\t" + request);
-                socketChannel.write(ByteBuffer.wrap(request.getBytes(StandardCharsets.UTF_8)));
-//                int bytesCount = socketChannel.read(inputBuffer);
-//                System.out.println(COLOR + "Ответ сервера получен:\t" +
-//                        new String(inputBuffer.array(), 0, bytesCount, StandardCharsets.UTF_8).trim());
-                if (EXIT_WORD_EN.equalsIgnoreCase(request.trim()) || EXIT_WORD_RU.equalsIgnoreCase(request.trim()))
+                input = scanner.nextLine();
+                final Request request = new Request(WebServer.REGISTER_USER_KEY, input);
+                final String requestStr = Serializer.serialize(request);
+                System.out.println(COLOR + "Клиент " + Thread.currentThread().getName() + " отсылает запрос:\t" + requestStr);
+                socketChannel.write(ByteBuffer.wrap(requestStr.getBytes(StandardCharsets.UTF_8)));
+                if (EXIT_WORD_EN.equalsIgnoreCase(input.trim()) || EXIT_WORD_RU.equalsIgnoreCase(input.trim()))
                     break;
+                int bytesCount = socketChannel.read(inputBuffer);
+                if (bytesCount >= 0) {
+                    System.out.println(COLOR + "Ответ сервера получен:\t" +
+                            new String(inputBuffer.array(), 0, bytesCount, StandardCharsets.UTF_8).trim());
+                }
                 inputBuffer.clear();
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
-            System.out.println("!!!!!!!!!!!!!!!!! " + e.getMessage());
         }
         System.out.println(COLOR + "Клиент " + Thread.currentThread().getName() + " завершил работу" + "\033[0m");
     }
