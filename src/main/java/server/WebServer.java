@@ -6,6 +6,7 @@ import file_worker.FileWorker;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.ServerSocket;
 import java.nio.channels.ServerSocketChannel;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -27,14 +28,15 @@ public class WebServer {
     private final static String HOST = FileWorker.getHostAndPortFromConfig(SETTINGS_FILE_PATH)[FileWorker.HOST_INDEX];
     private static final int PORT =
             Integer.parseInt(FileWorker.getHostAndPortFromConfig(SETTINGS_FILE_PATH)[FileWorker.PORT_INDEX]);
-    protected static final Map<String, User> users = new ConcurrentSkipListMap<>();
+    public static final Map<String, User> users = new ConcurrentSkipListMap<>();
     protected static final AtomicInteger online = new AtomicInteger(0);
 
     public static void start() {
         System.out.println(COLOR + "Сервер запускается...");
         try {
-            final ServerSocketChannel server = ServerSocketChannel.open();
-            server.bind(new InetSocketAddress(HOST, PORT));
+//            final ServerSocketChannel server = ServerSocketChannel.open();
+            final ServerSocket server = new ServerSocket(PORT);
+//            server.bind(new InetSocketAddress(HOST, PORT));
             while (true) {
                 new Thread(new ServerTask(server.accept())).start();
             }

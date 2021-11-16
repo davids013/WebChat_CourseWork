@@ -6,6 +6,16 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Message {
+    public static final String[] TEMPLATE = {
+            "Привет!",
+            "Как дела?",
+            "В выходные едем на рыбалку?",
+            "Ходил сегодня на собеседование",
+            "Жена опять пилит",
+            "Купи хлеба",
+            "Забери сына из школы!!!",
+            "Еда в холодильнике",
+            "Кто она?! Я её знаю?!"};
     private final LocalDateTime sentTime;
     private final String author;
     private final String addressee;
@@ -58,12 +68,4 @@ public class Message {
                 .append('}');
         return sb.toString();
     }
-
-//    public String serialize() {
-//        return new Gson().toJson(this);
-//    }
-//
-//    public static Message deserialize(String messageJson) {
-//        return new Gson().fromJson(messageJson, Message.class);
-//    }
 }

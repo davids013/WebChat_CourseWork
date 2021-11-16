@@ -1,15 +1,15 @@
 package entities;
 
 public class Request {
-    private final String command;
+    private final Commands command;
     private final String body;
 
-    public Request(String command, String body) {
+    public Request(Commands command, String body) {
         this.command = command;
         this.body = body;
     }
 
-    public String getCommand() {
+    public Commands getCommand() {
         return command;
     }
 
