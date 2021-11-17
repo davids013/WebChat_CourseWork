@@ -2,10 +2,7 @@ package server;
 
 import entities.*;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
@@ -16,8 +13,10 @@ public class ServerTask implements Runnable {
     private final String EXIT_WORD_RU = WebServer.EXIT_WORD_RU;
     private final Socket client;
     private final String COLOR = WebServer.COLOR;
-    protected static final String SEND_MESSAGE_KEY = WebServer.SEND_MESSAGE_KEY;
-    protected static final String REGISTER_USER_KEY = WebServer.REGISTER_USER_KEY;
+//    protected static final String SEND_MESSAGE_KEY = WebServer.SEND_MESSAGE_KEY;
+//    protected static final String REGISTER_USER_KEY = WebServer.REGISTER_USER_KEY;
+    private String logFile;
+    private Logger logger;
 
     public ServerTask(Socket client) {
         this.client = client;
@@ -93,6 +92,8 @@ public class ServerTask implements Runnable {
         final User user = new User(name);
         if (!WebServer.users.containsValue(user)) {
             WebServer.users.put(name, user);
+//            logFile = WebServer.CHAT_LOG_DIRECTORY + WebServer.SEP + name + WebServer.LOG_EXTENSION;
+//            logger = new FileLogger(logFile);
             System.out.println("users: " + WebServer.users);
             return "Успешно. Пользователь с именем \"" + name + "" + "\" зарегистрирован";
         } return "Отказано. Пользователь с именем \"" + name + "" + "\" уже существует";
@@ -109,6 +110,7 @@ public class ServerTask implements Runnable {
 //            TODO: убедиться, что письма добавляются пользователям, а не создаются юзеры с единственным письмом
             WebServer.users.get(authorName).sendMessage(message);
             WebServer.users.get(addresseeName).receiveMessage(message);
+//            logger.log(message.toString());
             return "Успешно. Сообщение отправлено пользователю \"" + addresseeName + "\"";
         }
     }

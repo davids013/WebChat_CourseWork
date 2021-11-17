@@ -57,7 +57,7 @@ public class WebClient {
                 if (request == null) {
                     counter.set(0);
                     System.out.print(COLOR +
-                            "Введите запрос серверу (`" + EXIT_WORD_EN + "` для выхода):\n>> ");
+                            "Введите имя нового пользователя (`" + EXIT_WORD_EN + "` для выхода):\n>> ");
                     input = scanner.nextLine();
                     request = requestRegistration(input);
                     userName = request.getBody();
