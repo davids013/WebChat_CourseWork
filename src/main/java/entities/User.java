@@ -18,7 +18,7 @@ public class User {
     public User(String name) {
         this.name = name;
         logFile = WebServer.CHAT_LOG_DIRECTORY + WebServer.SEP + name + WebServer.LOG_EXTENSION;
-        logger = new FileLogger(logFile);
+        logger = new FileLogger(logFile, true);
     }
 
     public String getName() {

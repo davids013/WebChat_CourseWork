@@ -2,5 +2,6 @@ package entities;
 
 public enum Commands {
     REGISTER_USER,
-    SEND_MESSAGE
+    SEND_MESSAGE,
+    EXIT
 }

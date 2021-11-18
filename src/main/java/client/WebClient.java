@@ -10,16 +10,13 @@ import server.WebServer;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.nio.ByteBuffer;
-import java.nio.channels.SocketChannel;
-import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 
 public class WebClient {
-    private static final byte TOTAL_MESSAGES = 3;
+    private static final byte SESSION_MESSAGES = 5;
     private static final char SEP = File.separatorChar;
     private static final String COLOR = "\033[34m";
     private static final String EXIT_WORD_EN = "exit";
@@ -37,13 +34,13 @@ public class WebClient {
         final InetSocketAddress address = new InetSocketAddress(HOST, PORT);
         try (Socket socket = new Socket(HOST, PORT);
              final BufferedReader in = new BufferedReader(
-                new InputStreamReader(socket.getInputStream()));
+                     new InputStreamReader(socket.getInputStream()));
              final PrintWriter out = new PrintWriter(
                      new OutputStreamWriter(socket.getOutputStream()), true)) {
 //        try (final SocketChannel socketChannel = SocketChannel.open()) {
 
 //            socketChannel.connect(address);
-            final ByteBuffer inputBuffer = ByteBuffer.allocate(2 << 20);
+//            final ByteBuffer inputBuffer = ByteBuffer.allocate(2 << 20);
 
             String input = null;
             String userName = null;
@@ -57,19 +54,20 @@ public class WebClient {
                 if (request == null) {
                     counter.set(0);
                     System.out.print(COLOR +
-                            "Введите имя нового пользователя (`" + EXIT_WORD_EN + "` для выхода):\n>> ");
+                            "Введите имя пользователя (`" + EXIT_WORD_EN + "` для выхода):\n>> ");
                     input = scanner.nextLine();
                     request = requestRegistration(input);
                     userName = request.getBody();
                     Thread.currentThread().setName(userName);
 //                    Thread.sleep(500);
-                } else if (counter.get() < TOTAL_MESSAGES) {
+                } else if (counter.get() < SESSION_MESSAGES) {
                     request = requestSendMessage(userName);
                     counter.set(counter.get() + 1);
 //                    Thread.sleep(500);
                 } else {
 //                    socketChannel.write(ByteBuffer.wrap(EXIT_WORD_EN.getBytes(StandardCharsets.UTF_8)));
-                    out.println(EXIT_WORD_EN);
+                    request = new Request(Commands.EXIT, "exit");
+                    out.println(Serializer.serialize(request));
                     break;
                 }
 //                final Request request = new Request(Commands.REGISTER_USER, input);
@@ -81,11 +79,10 @@ public class WebClient {
                     break;
 //                int bytesCount = socketChannel.read(inputBuffer);
 //                if (bytesCount >= 0) {
-                if (true) {
-                    System.out.println(COLOR + "Ответ сервера получен:\t" +
+                System.out.println(COLOR + "Ответ сервера получен:\t" +
 //                            new String(inputBuffer.array(), 0, bytesCount, StandardCharsets.UTF_8).trim());
                         in.readLine());
-                }
+//                }
 //                inputBuffer.clear();
             }
         } catch (IOException | InterruptedException e) {
@@ -96,6 +93,8 @@ public class WebClient {
 
     private static Request requestRegistration(String userName) {
 //        final Scanner scanner = new Scanner(System.in);
+        if (EXIT_WORD_EN.equalsIgnoreCase(userName.trim()) || EXIT_WORD_RU.equalsIgnoreCase((userName).trim()))
+            return new Request(Commands.EXIT, "exit");
         return new Request(Commands.REGISTER_USER, userName);
     }
 
