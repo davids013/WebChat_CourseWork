@@ -59,8 +59,14 @@ public abstract class FileWorker {
         }
     }
 
-    private static boolean log(String message, String logFilename) {
-//        TODO: code it
-        return false;
-    }
+//    private static String readLine(String filename) {
+//        String line
+//        try {
+//            Files.readString(Paths.get(filename));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+////        TODO: code it
+//        return false;
+//    }
 }

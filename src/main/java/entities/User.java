@@ -13,12 +13,10 @@ public class User {
     private final List<Message> incomingMessages = new ArrayList<>();
     private final List<Message> outgoingMessages = new ArrayList<>();
     private final String logFile;
-    private final Logger logger;
 
     public User(String name) {
         this.name = name;
         logFile = WebServer.CHAT_LOG_DIRECTORY + WebServer.SEP + name + WebServer.LOG_EXTENSION;
-        logger = new FileLogger(logFile, true);
     }
 
     public String getName() {
@@ -46,6 +44,7 @@ public class User {
     }
 
     private void addToChatLog(Message message, boolean isIncoming) {
+        final Logger logger = new FileLogger(logFile, true);
         final String lineSeparator = FileLogger.LINE_SEPARATOR;
         final String prefix = isIncoming ? "" : "\t\t\t\t\t";
         final DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT);

@@ -10,6 +10,7 @@ public class ServerTask implements Runnable {
 //    private final String EXIT_WORD_RU = WebServer.EXIT_WORD_RU;
     private final Socket client;
     private final String COLOR = WebServer.COLOR;
+    private final String LOG_SEPARATOR = FileLogger.LINE_SEPARATOR;
     //    protected static final String SEND_MESSAGE_KEY = WebServer.SEND_MESSAGE_KEY;
 //    protected static final String REGISTER_USER_KEY = WebServer.REGISTER_USER_KEY;
     private final String usersLogFile = WebServer.USERS_STORAGE_PATH;
@@ -71,11 +72,21 @@ public class ServerTask implements Runnable {
                     switch (command) {
                         case REGISTER_USER:
                             result = registerUser(body);
-                            usersLogger.log(Serializer.serialize(WebServer.users));
+                            final StringBuilder sbr = new StringBuilder();
+                            WebServer.users.values().forEach(user ->
+                                            sbr.append(Serializer.serialize(user)).append(LOG_SEPARATOR));
+                            sbr.delete(sbr.lastIndexOf(LOG_SEPARATOR), sbr.length());
+                            usersLogger.log(sbr.toString());
+//                            usersLogger.log(Serializer.serialize(WebServer.users));
                             break;
                         case SEND_MESSAGE:
                             result = sendMessage(Serializer.deserialize(body, Message.class));
-                            usersLogger.log(Serializer.serialize(WebServer.users));
+                            final StringBuilder sbs = new StringBuilder();
+                            WebServer.users.values().forEach(user ->
+                                    sbs.append(Serializer.serialize(user)).append(LOG_SEPARATOR));
+                            sbs.delete(sbs.lastIndexOf(LOG_SEPARATOR), sbs.length());
+                            usersLogger.log(sbs.toString());
+//                            usersLogger.log(Serializer.serialize(WebServer.users));
                             break;
                         default:
                             result = "Ошибка. Неизвестный запрос";
@@ -87,7 +98,7 @@ public class ServerTask implements Runnable {
                 System.out.println(COLOR + "Сервер отправляет ответ:\t" + result);
 //                client.write(ByteBuffer.wrap(result.getBytes(StandardCharsets.UTF_8)));
                 out.println(result);
-                System.out.println("users: " + WebServer.users);
+//                System.out.println("users: " + WebServer.users);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -102,14 +113,11 @@ public class ServerTask implements Runnable {
 
     private String registerUser(String name) {
         final User user = new User(name);
-        if (!WebServer.users.containsValue(user)) {
+        if (!WebServer.users.containsKey(user.getName())) {
             WebServer.users.put(name, user);
-//            logFile = WebServer.CHAT_LOG_DIRECTORY + WebServer.SEP + name + WebServer.LOG_EXTENSION;
-//            logger = new FileLogger(logFile);
-            System.out.println("users: " + WebServer.users);
             return "Успешно. Пользователь с именем \"" + name + "" + "\" зарегистрирован";
         }
-        return "Отказано. Пользователь с именем \"" + name + "" + "\" уже существует";
+        return "Успешно. Пользователь с именем \"" + name + "" + "\" авторизован";
     }
 
     private String sendMessage(Message message) {
@@ -123,7 +131,6 @@ public class ServerTask implements Runnable {
         } else {
             WebServer.users.get(authorName).sendMessage(message);
             WebServer.users.get(addresseeName).receiveMessage(message);
-//            logger.log(message.toString());
             return "Успешно. Сообщение отправлено пользователю \"" + addresseeName + "\"";
         }
     }

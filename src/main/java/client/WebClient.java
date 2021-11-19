@@ -45,14 +45,16 @@ public class WebClient {
             String input = null;
             String userName = null;
             Request request = null;
-            final ThreadLocal<Integer> counter = new ThreadLocal<>();
+//            final ThreadLocal<Integer> counter = new ThreadLocal<>();
+            int counterInt = 0;
             while (true) {
                 Thread.sleep(100); // Костыль для правильной очередности печати в консоль
 //                input = "test input";
 //                Thread.sleep(1000);
 //                final Request request = new Request(WebServer.REGISTER_USER_KEY, input);
                 if (request == null) {
-                    counter.set(0);
+//                    counter.set(0);
+//                    counterInt = 0;
                     System.out.print(COLOR +
                             "Введите имя пользователя (`" + EXIT_WORD_EN + "` для выхода):\n>> ");
                     input = scanner.nextLine();
@@ -60,9 +62,10 @@ public class WebClient {
                     userName = request.getBody();
                     Thread.currentThread().setName(userName);
 //                    Thread.sleep(500);
-                } else if (counter.get() < SESSION_MESSAGES) {
+                } else if (counterInt < SESSION_MESSAGES) {
                     request = requestSendMessage(userName);
-                    counter.set(counter.get() + 1);
+//                    counter.set(counter.get() + 1);
+                    counterInt++;
 //                    Thread.sleep(500);
                 } else {
 //                    socketChannel.write(ByteBuffer.wrap(EXIT_WORD_EN.getBytes(StandardCharsets.UTF_8)));

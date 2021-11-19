@@ -1,5 +1,7 @@
 package server;
 
+import entities.FileLogger;
+import entities.Serializer;
 import entities.User;
 import file_worker.FileWorker;
 
@@ -8,15 +10,16 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.nio.channels.ServerSocketChannel;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class WebServer {
     public static final char SEP = File.separatorChar;
@@ -35,8 +38,8 @@ public class WebServer {
     private static final int PORT =
             Integer.parseInt(FileWorker.getHostAndPortFromConfig(SETTINGS_FILE_PATH)[FileWorker.PORT_INDEX]);
     public static final int MAX_ONLINE = 10;
-    public static final String USERS_STORAGE_PATH = RESOURCES_PATH + SEP + "users.db";
-    public static final Map<String, User> users = new ConcurrentSkipListMap<>();
+    public static final String USERS_STORAGE_PATH = RESOURCES_PATH + SEP + "users.info";
+    public static Map<String, User> users = new ConcurrentSkipListMap<>();
     protected static final AtomicInteger online = new AtomicInteger(0);
 
     public static void start() {
@@ -46,6 +49,21 @@ public class WebServer {
 //            final ServerSocketChannel server = ServerSocketChannel.open();
             final ServerSocket server = new ServerSocket(PORT);
 //            server.bind(new InetSocketAddress(HOST, PORT));
+            if (Files.exists(Paths.get(USERS_STORAGE_PATH))) {
+                final List<String> savedUsers =
+                        Files.readAllLines(Paths.get(USERS_STORAGE_PATH), StandardCharsets.UTF_8);
+                for (String userJson : savedUsers) {
+                    if (!userJson.isBlank()) {
+                        final User user = Serializer.deserialize(userJson, User.class);
+                        users.put(user.getName(), user);
+                    }
+                }
+
+            }
+
+
+
+//            else users = new ConcurrentSkipListMap<>();
             while (true) {
 //                new Thread(new ServerTask(server.accept())).start();
                 pool.submit(new ServerTask(server.accept()));
