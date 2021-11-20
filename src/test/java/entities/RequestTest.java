@@ -1,7 +1,6 @@
 package entities;
 
-import entities.Commands;
-import entities.Request;
+import methods.Methods;
 import org.junit.jupiter.api.*;
 
 public class RequestTest {

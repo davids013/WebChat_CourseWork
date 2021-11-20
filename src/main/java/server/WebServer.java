@@ -24,12 +24,11 @@ public class WebServer {
 //    public static final String SEND_MESSAGE_KEY = "send";
 //    public static final String REGISTER_USER_KEY = "register";
     private static final String RESOURCES_PATH = "src" + SEP + "main" + SEP + "resources";
-    private static final String SETTINGS_FILE_PATH = RESOURCES_PATH + SEP + "settings.txt";
+    public static final String SETTINGS_FILE_PATH = RESOURCES_PATH + SEP + "settings.txt";
     public static final String LOG_EXTENSION = ".log";
     public static final String ROOT_LOG_DIRECTORY = "logs";
     public static final String CHAT_LOG_DIRECTORY = ROOT_LOG_DIRECTORY + SEP + "chat_log";
     protected static final String SERVER_LOG_PATH = ROOT_LOG_DIRECTORY + SEP + "requests" + LOG_EXTENSION;
-    private static final String HOST = ConfigWorker.getHostAndPortFromConfig(SETTINGS_FILE_PATH)[ConfigWorker.HOST_INDEX];
     private static final int PORT =
             Integer.parseInt(ConfigWorker.getHostAndPortFromConfig(SETTINGS_FILE_PATH)[ConfigWorker.PORT_INDEX]);
     public static final int MAX_ONLINE = 10;
@@ -56,10 +55,7 @@ public class WebServer {
 
             }
 
-
-
-//            else users = new ConcurrentSkipListMap<>();
-            while (true) {
+            while (!Thread.currentThread().isInterrupted()) {
 //                new Thread(new ServerTask(server.accept())).start();
                 pool.submit(new ServerTask(server.accept()));
             }
@@ -71,7 +67,7 @@ public class WebServer {
 //        System.out.println(COLOR + "Сервер завершил работу" + "\033[0m");
     }
 
-    private static void addNewUser(User user) {
-        users.put(user.getName(), user);
-    }
+    public static int getOnline() { return online.get(); }
+
+    public static Map<String, User> getUsers() { return users; }
 }

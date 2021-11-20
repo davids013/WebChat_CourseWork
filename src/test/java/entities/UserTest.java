@@ -1,5 +1,6 @@
 package entities;
 
+import methods.Methods;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 

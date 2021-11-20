@@ -1,8 +1,7 @@
 package entities;
 
 import com.google.gson.Gson;
-import entities.Message;
-import entities.Serializer;
+import methods.Methods;
 import org.junit.jupiter.api.*;
 
 public class SerializerTest {

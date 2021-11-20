@@ -19,17 +19,17 @@ public class WebClient {
     private static final String EXIT_WORD_EN = "exit";
     private static final String EXIT_WORD_RU = "учше";
     private static final String SETTINGS_FILE_PATH = "src" + SEP + "main" + SEP + "resources" + SEP + "settings.txt";
-    private static final String LOG_FILE_PATH = "src" + SEP + "main" + SEP + "resources" + SEP + "client.log";
     private final static String HOST = ConfigWorker.getHostAndPortFromConfig(SETTINGS_FILE_PATH)[ConfigWorker.HOST_INDEX];
     private final static int PORT =
             Integer.parseInt(ConfigWorker.getHostAndPortFromConfig(SETTINGS_FILE_PATH)[ConfigWorker.PORT_INDEX]);
 
     public static void start() {
-        System.out.println(COLOR + "Клиент " + Thread.currentThread().getName() + " запускается...");
+        System.out.println(COLOR + "Клиент " + Thread.currentThread().getName()
+                + " подключается к серверу " + HOST + " (порт " + PORT + ")...");
 
         final Scanner scanner = new Scanner(System.in);
-        final InetSocketAddress address = new InetSocketAddress(HOST, PORT);
-        try (Socket socket = new Socket(HOST, PORT);
+//        final InetSocketAddress address = new InetSocketAddress(HOST, PORT);
+        try (final Socket socket = new Socket(HOST, PORT);
              final BufferedReader in = new BufferedReader(
                      new InputStreamReader(socket.getInputStream()));
              final PrintWriter out = new PrintWriter(

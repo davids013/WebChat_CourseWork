@@ -61,8 +61,6 @@ public abstract class ConfigWorker {
             }
             return getHostAndPortFromConfig(configFilename);
         }
-        System.out.println("Прочитаны настройки соединения: \t"
-                + hostAndPort[HOST_INDEX] + "\t" + hostAndPort[PORT_INDEX]);
         return hostAndPort;
     }
 
@@ -76,9 +74,7 @@ public abstract class ConfigWorker {
             writer.println(HOST_CONFIG_KEY + DEFAULT_HOST);
             writer.println(PORT_CONFIG_KEY + DEFAULT_PORT);
             writer.flush();
-            if (configFile.exists()) {
-                return true;
-            } else return false;
+            return configFile.exists();
         } catch (IOException e) {
             e.printStackTrace();
             return false;

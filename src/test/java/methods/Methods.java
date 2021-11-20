@@ -1,4 +1,4 @@
-package entities;
+package methods;
 
 public abstract class Methods {
     public static int testCounter;

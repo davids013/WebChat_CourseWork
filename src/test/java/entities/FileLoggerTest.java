@@ -1,6 +1,6 @@
 package entities;
 
-import entities.FileLogger;
+import methods.Methods;
 import org.junit.jupiter.api.*;
 
 import java.io.File;
@@ -28,11 +28,10 @@ public class FileLoggerTest {
         final String innerDir = outerDir + File.separator + "file";
         final String testFilePath = innerDir + File.separator + "test.txt";
         final File testFile = new File(testFilePath);
-        boolean result = false;
         if (!testFile.exists() || testFile.delete()) {
-            final FileLogger logger = new FileLogger(testFilePath, false);
+            new FileLogger(testFilePath, false);
         }
-        result = testFile.exists();
+        final boolean result = testFile.exists();
         testFile.delete();
         new File(innerDir).delete();
         new File(outerDir).delete();
