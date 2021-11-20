@@ -18,5 +18,7 @@ public class Request {
     }
 
     @Override
-    public String toString() { return "Request{command=" + command + ", body=" + body + "}"; }
+    public String toString() {
+        return "Request{command=" + command + ", body=" + body + "}";
+    }
 }

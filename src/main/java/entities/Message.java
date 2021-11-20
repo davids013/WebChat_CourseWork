@@ -56,15 +56,17 @@ public class Message {
     }
 
     @Override
-    public int hashCode() { return Objects.hash(author, addressee, text, sentTime); }
+    public int hashCode() {
+        return Objects.hash(author, addressee, text, sentTime);
+    }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Message{");
-        sb      .append("SENT_TIME=")   .append(sentTime)
-                .append(", AUTHOR='")   .append(author)     .append('\'')
-                .append(", ADDRESSEE='").append(addressee)  .append('\'')
-                .append(", text='")     .append(text)       .append('\'')
+        sb.append("SENT_TIME=").append(sentTime)
+                .append(", AUTHOR='").append(author).append('\'')
+                .append(", ADDRESSEE='").append(addressee).append('\'')
+                .append(", text='").append(text).append('\'')
                 .append('}');
         return sb.toString();
     }

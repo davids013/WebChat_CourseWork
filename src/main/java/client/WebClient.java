@@ -6,7 +6,9 @@ import server.WebServer;
 
 import java.io.*;
 import java.net.InetSocketAddress;
-import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Scanner;
@@ -28,61 +30,48 @@ public class WebClient {
                 + " подключается к серверу " + HOST + " (порт " + PORT + ")...");
 
         final Scanner scanner = new Scanner(System.in);
-//        final InetSocketAddress address = new InetSocketAddress(HOST, PORT);
-        try (final Socket socket = new Socket(HOST, PORT);
-             final BufferedReader in = new BufferedReader(
-                     new InputStreamReader(socket.getInputStream()));
-             final PrintWriter out = new PrintWriter(
-                     new OutputStreamWriter(socket.getOutputStream()), true)) {
-//        try (final SocketChannel socketChannel = SocketChannel.open()) {
-
-//            socketChannel.connect(address);
-//            final ByteBuffer inputBuffer = ByteBuffer.allocate(2 << 20);
+        final InetSocketAddress address = new InetSocketAddress(HOST, PORT);
+        try (final SocketChannel socketChannel = SocketChannel.open()) {
+            socketChannel.connect(address);
+            final ByteBuffer inputBuffer = ByteBuffer.allocate(2 << 20);
 
             String input = null;
             String userName = null;
             Request request = null;
-//            final ThreadLocal<Integer> counter = new ThreadLocal<>();
             int counterInt = 0;
             while (true) {
-//                input = "test input";
-//                Thread.sleep(1000);
-//                final Request request = new Request(WebServer.REGISTER_USER_KEY, input);
                 if (request == null) {
-//                    counter.set(0);
                     Thread.sleep(750); // Костыль для правильной очередности печати в консоль
                     System.out.print(COLOR +
-                            "Введите имя пользователя (`" + EXIT_WORD_EN + "` для выхода):\n>> ");
+                            "Введите имя пользователя (`" + EXIT_WORD_EN + "` для отказа):\n>> ");
                     input = scanner.nextLine();
                     request = requestRegistration(input);
                     userName = request.getBody();
                     Thread.currentThread().setName(userName);
-//                    Thread.sleep(500);
                 } else if (counterInt < SESSION_MESSAGES) {
                     request = requestSendMessage(userName);
-//                    counter.set(counter.get() + 1);
                     counterInt++;
-//                    Thread.sleep(500);
                 } else {
-//                    socketChannel.write(ByteBuffer.wrap(EXIT_WORD_EN.getBytes(StandardCharsets.UTF_8)));
                     request = new Request(Commands.EXIT, "exit");
-                    out.println(Serializer.serialize(request));
+                    socketChannel.write(ByteBuffer.wrap(
+                            Serializer.serialize(request).getBytes(StandardCharsets.UTF_8)));
                     break;
                 }
-//                final Request request = new Request(Commands.REGISTER_USER, input);
                 final String requestStr = Serializer.serialize(request);
-                System.out.println(COLOR + "Клиент " + Thread.currentThread().getName() + " отсылает запрос:\t" + requestStr);
-//                socketChannel.write(ByteBuffer.wrap(requestStr.getBytes(StandardCharsets.UTF_8)));
-                out.println(requestStr);
+                System.out.println(COLOR + "Клиент " + Thread.currentThread().getName()
+                        + " отсылает запрос:\t" + requestStr);
+                socketChannel.write(ByteBuffer.wrap(requestStr.getBytes(StandardCharsets.UTF_8)));
                 if (EXIT_WORD_EN.equalsIgnoreCase(input.trim()) || EXIT_WORD_RU.equalsIgnoreCase(input.trim()))
                     break;
-//                int bytesCount = socketChannel.read(inputBuffer);
-//                if (bytesCount >= 0) {
-                System.out.println(COLOR + "Ответ сервера получен:\t" +
-//                            new String(inputBuffer.array(), 0, bytesCount, StandardCharsets.UTF_8).trim());
-                        in.readLine());
-//                }
-//                inputBuffer.clear();
+                int bytesCount = -1;
+                try {
+                    bytesCount = socketChannel.read(inputBuffer);
+                } catch (IOException ignored) { }
+                if (bytesCount >= 0) {
+                    System.out.println(COLOR + "Ответ сервера получен:\t" +
+                            new String(inputBuffer.array(), 0, bytesCount, StandardCharsets.UTF_8).trim());
+                }
+                inputBuffer.clear();
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
@@ -91,7 +80,6 @@ public class WebClient {
     }
 
     private static Request requestRegistration(String userName) {
-//        final Scanner scanner = new Scanner(System.in);
         if (EXIT_WORD_EN.equalsIgnoreCase(userName.trim()) || EXIT_WORD_RU.equalsIgnoreCase((userName).trim()))
             return new Request(Commands.EXIT, "exit");
         return new Request(Commands.REGISTER_USER, userName);
@@ -107,21 +95,14 @@ public class WebClient {
         final Random rnd = new Random();
         final String addresseeName;
         final String text;
-        final Message message;
-        System.out.println("usersSize = " + WebServer.users.size());
-        if (WebServer.users.size() <= 1) {
+        if (WebServer.getUsers().size() <= 1) {
             addresseeName = authorName;
         } else {
-            final Set<String> userNames = new HashSet<>(WebServer.users.keySet());
+            final Set<String> userNames = new HashSet<>(WebServer.getUsers().keySet());
             userNames.remove(authorName);
             addresseeName = (String) userNames.toArray()[rnd.nextInt(userNames.size())];
         }
         text = Message.TEMPLATE[rnd.nextInt(Message.TEMPLATE.length)];
         return new Message(authorName, addresseeName, text);
-    }
-
-    private static boolean log(String message, String logFilename) {
-//        TODO: code it
-        return false;
     }
 }

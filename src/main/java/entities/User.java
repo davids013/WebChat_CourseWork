@@ -31,7 +31,9 @@ public class User {
         return outgoingMessages;
     }
 
-    public String getLogFile() { return logFile; }
+    public String getLogFile() {
+        return logFile;
+    }
 
     public User receiveMessage(Message message) {
         incomingMessages.add(message);
@@ -55,7 +57,6 @@ public class User {
         final StringBuilder sb = new StringBuilder();
         sb
                 .append(prefix)
-//                .append(message.getSentTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy hh:mm:ss")))
                 .append(message.getSentTime().format(formatter))
                 .append(lineSeparator)
                 .append(prefix)
@@ -76,7 +77,9 @@ public class User {
     }
 
     @Override
-    public int hashCode() { return Objects.hash(name); }
+    public int hashCode() {
+        return Objects.hash(name);
+    }
 
     @Override
     public String toString() {

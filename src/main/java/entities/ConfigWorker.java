@@ -43,10 +43,6 @@ public abstract class ConfigWorker {
                             hostAndPort[PORT_INDEX] = portLine.replace(PORT_CONFIG_KEY, "");
                         }
                     }
-//                    if (hostStr.length() >= 7 && portStr.length() >= 4) {
-//                        hostAndPort[HOST_INDEX] = hostStr;
-//                        hostAndPort[PORT_INDEX] = portLine.replace(PORT_CONFIG_KEY, "");
-//                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
