@@ -1,10 +1,7 @@
 package client;
 
-import entities.Commands;
-import entities.Message;
-import entities.Request;
-import entities.Serializer;
-import file_worker.FileWorker;
+import entities.*;
+import entities.ConfigWorker;
 import server.WebServer;
 
 import java.io.*;
@@ -23,9 +20,9 @@ public class WebClient {
     private static final String EXIT_WORD_RU = "учше";
     private static final String SETTINGS_FILE_PATH = "src" + SEP + "main" + SEP + "resources" + SEP + "settings.txt";
     private static final String LOG_FILE_PATH = "src" + SEP + "main" + SEP + "resources" + SEP + "client.log";
-    private final static String HOST = FileWorker.getHostAndPortFromConfig(SETTINGS_FILE_PATH)[FileWorker.HOST_INDEX];
+    private final static String HOST = ConfigWorker.getHostAndPortFromConfig(SETTINGS_FILE_PATH)[ConfigWorker.HOST_INDEX];
     private final static int PORT =
-            Integer.parseInt(FileWorker.getHostAndPortFromConfig(SETTINGS_FILE_PATH)[FileWorker.PORT_INDEX]);
+            Integer.parseInt(ConfigWorker.getHostAndPortFromConfig(SETTINGS_FILE_PATH)[ConfigWorker.PORT_INDEX]);
 
     public static void start() {
         System.out.println(COLOR + "Клиент " + Thread.currentThread().getName() + " запускается...");
@@ -48,13 +45,12 @@ public class WebClient {
 //            final ThreadLocal<Integer> counter = new ThreadLocal<>();
             int counterInt = 0;
             while (true) {
-                Thread.sleep(100); // Костыль для правильной очередности печати в консоль
 //                input = "test input";
 //                Thread.sleep(1000);
 //                final Request request = new Request(WebServer.REGISTER_USER_KEY, input);
                 if (request == null) {
 //                    counter.set(0);
-//                    counterInt = 0;
+                    Thread.sleep(750); // Костыль для правильной очередности печати в консоль
                     System.out.print(COLOR +
                             "Введите имя пользователя (`" + EXIT_WORD_EN + "` для выхода):\n>> ");
                     input = scanner.nextLine();

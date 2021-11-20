@@ -1,25 +1,20 @@
 package server;
 
-import entities.FileLogger;
+import entities.ConfigWorker;
 import entities.Serializer;
 import entities.User;
-import file_worker.FileWorker;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.net.ServerSocket;
-import java.nio.channels.ServerSocketChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ConcurrentSkipListMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 public class WebServer {
     public static final char SEP = File.separatorChar;
@@ -34,12 +29,12 @@ public class WebServer {
     public static final String ROOT_LOG_DIRECTORY = "logs";
     public static final String CHAT_LOG_DIRECTORY = ROOT_LOG_DIRECTORY + SEP + "chat_log";
     protected static final String SERVER_LOG_PATH = ROOT_LOG_DIRECTORY + SEP + "requests" + LOG_EXTENSION;
-    private static final String HOST = FileWorker.getHostAndPortFromConfig(SETTINGS_FILE_PATH)[FileWorker.HOST_INDEX];
+    private static final String HOST = ConfigWorker.getHostAndPortFromConfig(SETTINGS_FILE_PATH)[ConfigWorker.HOST_INDEX];
     private static final int PORT =
-            Integer.parseInt(FileWorker.getHostAndPortFromConfig(SETTINGS_FILE_PATH)[FileWorker.PORT_INDEX]);
+            Integer.parseInt(ConfigWorker.getHostAndPortFromConfig(SETTINGS_FILE_PATH)[ConfigWorker.PORT_INDEX]);
     public static final int MAX_ONLINE = 10;
     public static final String USERS_STORAGE_PATH = RESOURCES_PATH + SEP + "users.info";
-    public static Map<String, User> users = new ConcurrentSkipListMap<>();
+    public static final Map<String, User> users = new ConcurrentSkipListMap<>();
     protected static final AtomicInteger online = new AtomicInteger(0);
 
     public static void start() {
@@ -53,7 +48,7 @@ public class WebServer {
                 final List<String> savedUsers =
                         Files.readAllLines(Paths.get(USERS_STORAGE_PATH), StandardCharsets.UTF_8);
                 for (String userJson : savedUsers) {
-                    if (!userJson.isBlank()) {
+                    if (!userJson.trim().isEmpty()) {
                         final User user = Serializer.deserialize(userJson, User.class);
                         users.put(user.getName(), user);
                     }

@@ -31,6 +31,8 @@ public class User {
         return outgoingMessages;
     }
 
+    public String getLogFile() { return logFile; }
+
     public User receiveMessage(Message message) {
         incomingMessages.add(message);
         addToChatLog(message, true);

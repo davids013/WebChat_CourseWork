@@ -20,15 +20,16 @@ public class Main {
 //        TO+DO: save users list to file
 //        TO+DO: load users list from users.db
 //        TO+DO: examine in user list before register
-//        TO-DO: FileWorker -> Logger, adapt to read        - not necessary
-//        TODO: add tests
+//        TO-DO: ConfigWorker -> Logger, adapt to read        - not necessary
+//        TO+DO: add entities tests
+//        TODO: add server/client tests
 
         Thread server = new Thread(WebServer::start);
         Thread client1 = new Thread(WebClient::start);
         Thread client2 = new Thread(WebClient::start);
         Thread client3 = new Thread(WebClient::start);
         server.start();
-        Thread.sleep(30);
+        Thread.sleep(10);
         client1.start();
         client2.start();
         client3.start();
